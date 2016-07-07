@@ -1,0 +1,22 @@
+{
+	"name": "arckinteractive/twilio_sms",
+	"version": "0.0.0",
+	"type": "elgg-plugin",
+	"description": "Twilio SMS API",
+	"homepage": "http://arckinteractive.com",
+	"keywords": [
+		"elgg", "plugin", "notifications", "sms"
+	],
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Ismayil Khayredinov",
+			"email": "ismayil@arckinteractive.com"
+		}
+	],
+	"require": {
+		"php": ">=5.5",
+		"composer/installers": "~1.0",
+		"twilio/sdk": "^4.10"
+	}
+}
