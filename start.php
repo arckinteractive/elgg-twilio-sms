@@ -3,7 +3,7 @@
 /**
  * Twilio SMS Service
  *
- * @author Ismayil Khayredinov <info@arckinteractive.com>
+ * @author    Ismayil Khayredinov <info@arckinteractive.com>
  * @copyright Copyright (c) 2015, Ismayil Khayredinov
  */
 require_once __DIR__ . '/autoloader.php';
@@ -16,6 +16,10 @@ elgg_register_event_handler('init', 'system', 'twilio_sms_init');
  */
 function twilio_sms_init() {
 	elgg_register_plugin_hook_handler('send', 'sms', 'twilio_sms_send');
+
+	elgg_register_plugin_hook_handler('register', 'menu:page', [\ArckInteractive\Twilio\Menus::class, 'setupPageMenu']);
+
+	elgg_register_action('twilio/test_sms', __DIR__ . '/actions/twilio/test_sms.php', 'admin');
 }
 
 /**
@@ -25,6 +29,7 @@ function twilio_sms_init() {
  * @param string $type   "sms"
  * @param bool   $return Was SMS sent?
  * @param array  $params Hook params
+ *
  * @return bool
  */
 function twilio_sms_send($hook, $type, $return, $params) {
@@ -33,6 +38,21 @@ function twilio_sms_send($hook, $type, $return, $params) {
 		return;
 	}
 
+	$to = elgg_extract('to', $params);
+	$text = elgg_extract('text', $params);
+
+	return elgg_send_sms($to, $text);
+}
+
+/**
+ * Send an SMS
+ *
+ * @param string $to   Phone number of the recipient
+ * @param string $text Text of the SMS
+ *
+ * @return bool
+ */
+function elgg_send_sms($to, $text) {
 	$account_sid = elgg_get_plugin_setting('account_sid', 'twilio_sms');
 	$auth_token = elgg_get_plugin_setting('auth_token', 'twilio_sms');
 	$phone_number = elgg_get_plugin_setting('phone_number', 'twilio_sms');
@@ -48,13 +68,11 @@ function twilio_sms_send($hook, $type, $return, $params) {
 		}
 	}
 
-	$to = elgg_extract('to', $params);
-	$text = elgg_extract('text', $params);
 	$signature = elgg_get_plugin_setting('signature', 'twilio_sms');
 	if ($signature) {
 		$text .= " $signature";
 	}
-
+	
 	$client = new Services_Twilio($account_sid, $auth_token);
 
 	$options = [
@@ -70,6 +88,7 @@ function twilio_sms_send($hook, $type, $return, $params) {
 
 	try {
 		$client->account->messages->create($options);
+
 		return true;
 	} catch (Exception $ex) {
 		error_log($ex->getMessage());

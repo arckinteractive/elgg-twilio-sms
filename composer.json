@@ -18,5 +18,10 @@
 		"php": ">=5.5",
 		"composer/installers": "~1.0",
 		"twilio/sdk": "^4.10"
-	}
+	},
+    "autoload": {
+        "psr-0": {
+            "": "classes/"
+        }
+    }
 }
